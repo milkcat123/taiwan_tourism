@@ -5,6 +5,11 @@
     </v-app-bar>
 
     <v-navigation-drawer>
+      <div class="pa-2">
+        <v-btn block variant="tonal" @click="initData(nowDatas)">
+          沒資料請按這
+        </v-btn>
+      </div>
       <v-list density="compact">
         <template
           v-for="(item, index) in listItems"
@@ -32,31 +37,44 @@
       style="width: 100%"
     >
       <div class="d-flex align-strech justify-start flex-wrap">
-        <v-card
+        <!-- loading -->
+        <v-skeleton-loader
+          type="article,subtitle,button"
           class="ma-2"
-          v-for="(item, i) in cityDatas"
-          :key="i"
-          style="width: 23.5%"
-        >
-          <v-card-item>
-            <div>
+          width="300"
+          height="330"
+          v-if="cardLoading"
+        ></v-skeleton-loader>
+        <!-- cards -->
+        <template v-if="!cardLoading">
+          <v-card
+            class="ma-2"
+            v-for="(item, i) in cityDatas"
+            :key="i"
+            style="width: 23.5%"
+          >
+            <v-card-item>
               <div class="text-overline">{{ item.region }} {{ item.town }}</div>
-              <div class="text-h6 mb-2" style="min-height: 2rem">
+              <div
+                class="text-h6 mb-2 multi-ellipsis line-2"
+                style="min-height: 64px"
+              >
                 {{ item.name }}
               </div>
               <div
-                class="text-body-2 mb-2 multi-ellipsis"
+                class="text-body-2 mb-2 multi-ellipsis line-5"
                 style="min-height: 100px"
               >
                 {{ item.content }}
               </div>
               <div class="text-overline">活動時間</div>
-              <div class="text-caption">
+              <div class="text-caption mb-3">
                 {{ item.duration }}
               </div>
-            </div>
-          </v-card-item>
-        </v-card>
+              <v-btn block variant="tonal" color="primary">查看詳情</v-btn>
+            </v-card-item>
+          </v-card>
+        </template>
       </div>
     </v-main>
   </v-layout>
@@ -67,35 +85,30 @@ export default {
   name: "App",
   data() {
     return {
-      title: "觀光資訊資料",
+      title: "全台觀光資訊 Taiwan Tourism Info",
       dataList: [
         {
           url: "api/XMLReleaseALL_public/activity_C_f.json",
+          datas: [],
+        },
+        {
+          url: "api/XMLReleaseALL_public/scenic_spot_C_f.json",
           datas: [],
         },
       ],
       listItems: [
         {
           subTitle: "活動",
-          datas: [
-            {
-              text: "全台",
-              value: 0,
-            },
-          ],
+          datas: [],
         },
         {
           subTitle: "景點",
-          //   datas: [
-          //     {
-          //       text: "全台",
-          //       value: 0,
-          //     },
-          //   ],
+          datas: [],
         },
       ],
       nowTypeIndex: 0,
       nowCityIndex: 0,
+      cardLoading: true,
     };
   },
   created() {
@@ -128,13 +141,15 @@ export default {
       }
       this.getCityList(_datas);
       this.getDataContent(_data, _datas);
+      this.cardLoading = false;
     },
     getCityList(_datas) {
       //列表
       let _set = new Set();
       let _arr = [];
       _datas.forEach((item) => {
-        _set.add(item.Region);
+        let _region = item.Region === null ? "未分類" : item.Region;
+        _set.add(_region);
       });
       Array.from(_set).forEach((item, index) => {
         _arr.push({
@@ -142,13 +157,17 @@ export default {
           value: index + 1,
         });
       });
-      this.listItems[0].datas = [...this.listItems[0].datas, ..._arr];
+      let _init = {
+        text: "全台",
+        value: 0,
+      };
+      this.listItems[0].datas = [_init, ..._arr];
       console.log("getCityList", this.listItems[0].datas);
     },
     getDataContent(_data, _datas) {
       _data.datas = _datas.map((item) => {
         let data = {
-          region: item.Region,
+          region: item.Region === null ? "未分類" : item.Region,
           town: item.Town,
           name: item.Name,
           content: item.Description,
@@ -158,6 +177,7 @@ export default {
       });
     },
     async getData(url) {
+      this.cardLoading = true;
       let result;
       await this.axios
         .get(url)
@@ -181,9 +201,14 @@ export default {
 .multi-ellipsis {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
   overflow: hidden;
   word-break: break-word; /* Breaks the word properly */
   white-space: normal;
+  &.line-5 {
+    -webkit-line-clamp: 5;
+  }
+  &.line-2 {
+    -webkit-line-clamp: 2;
+  }
 }
 </style>

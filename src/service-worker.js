@@ -1,10 +1,10 @@
 const cacheName = "testPWA";
 import { precacheAndRoute } from "workbox-precaching";
-// import { setCacheNameDetails } from "workbox-core";
+import { setCacheNameDetails } from "workbox-core";
 
 precacheAndRoute(self.__WB_MANIFEST);
 
-// setCacheNameDetails({ prefix: process.env.VUE_APP_VERSION });
+setCacheNameDetails({ prefix: "TESTPWA" });
 // self.__precacheManifest = [].concat(self.__precacheManifest || []);
 // precacheAndRoute(self.__precacheManifest, {});
 
