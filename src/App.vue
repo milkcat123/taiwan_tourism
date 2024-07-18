@@ -71,18 +71,29 @@
               <div class="text-caption mb-3">
                 {{ item.duration }}
               </div>
-              <v-btn block variant="tonal" color="primary">查看詳情</v-btn>
+              <v-btn
+                block
+                variant="tonal"
+                color="primary"
+                @click="viewDetail(item)"
+                >查看詳情</v-btn
+              >
             </v-card-item>
           </v-card>
         </template>
       </div>
     </v-main>
   </v-layout>
+  <DetailModal ref="DetailModal" :itemData="itemData" />
 </template>
 
 <script>
+import DetailModal from "@/components/DetailModal.vue";
 export default {
   name: "App",
+  components: {
+    DetailModal,
+  },
   data() {
     return {
       title: "全台觀光資訊 Taiwan Tourism Info",
@@ -109,6 +120,7 @@ export default {
       nowTypeIndex: 0,
       nowCityIndex: 0,
       cardLoading: true,
+      itemData: {},
     };
   },
   created() {
@@ -167,14 +179,36 @@ export default {
     getDataContent(_data, _datas) {
       _data.datas = _datas.map((item) => {
         let data = {
-          region: item.Region === null ? "未分類" : item.Region,
+          region: this.returnIfNull(item.Region) ? "未分類" : item.Region,
           town: item.Town,
           name: item.Name,
           content: item.Description,
           duration: `${item.Start.slice(0, 10)} ~ ${item.End.slice(0, 10)}`,
+          id: item.Id,
+          address: item.Add,
+          tel: item.Tel,
+          organization: item.Org,
+          cycle: item.Cycle,
+          site: item.Website,
+          pictures: [
+            { url: item.Picture1, content: item.Picdescribe1 },
+            { url: item.Picture2, content: item.Picdescribe2 },
+            { url: item.Picture3, content: item.Picdescribe3 },
+          ],
+          position: {
+            x: item.Px,
+            y: item.Py,
+          },
         };
         return data;
       });
+    },
+    returnIfNull(prop) {
+      if (prop === "" || prop === null) {
+        return true;
+      } else {
+        return false;
+      }
     },
     async getData(url) {
       this.cardLoading = true;
@@ -194,9 +228,16 @@ export default {
       this.nowCityIndex = index;
       console.log("changeListIndex", this.nowCityIndex, this.cityDatas);
     },
+    viewDetail(itemData) {
+      console.log("viewDetail", itemData);
+      this.itemData = itemData;
+      let _DetailModal = this.$refs.DetailModal;
+      _DetailModal.switchModal();
+    },
   },
 };
 </script>
+
 <style lang="scss">
 .multi-ellipsis {
   display: -webkit-box;
