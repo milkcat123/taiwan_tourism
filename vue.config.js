@@ -1,6 +1,6 @@
 const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
-  publicPath: "/",
+  publicPath: "/taiwan_tourism/",
   transpileDependencies: true,
   lintOnSave: false,
   pwa: {
