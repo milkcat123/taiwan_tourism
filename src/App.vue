@@ -99,11 +99,11 @@ export default {
       title: "全台觀光資訊 Taiwan Tourism Info",
       dataList: [
         {
-          url: "api/XMLReleaseALL_public/activity_C_f.json",
+          url: "XMLReleaseALL_public/activity_C_f.json",
           datas: [],
         },
         {
-          url: "api/XMLReleaseALL_public/scenic_spot_C_f.json",
+          url: "XMLReleaseALL_public/scenic_spot_C_f.json",
           datas: [],
         },
       ],
@@ -214,7 +214,7 @@ export default {
       this.cardLoading = true;
       let result;
       await this.axios
-        .get(url)
+        .get(`${process.env.VUE_APP_API}/${url}`)
         .then((res) => {
           console.log("get successful", res);
           result = res.data.XML_Head.Infos.Info;
