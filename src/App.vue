@@ -9,6 +9,7 @@
         <v-btn block variant="tonal" @click="initData(nowDatas)">
           沒資料請按這
         </v-btn>
+        <TestCors />
       </div>
       <v-list density="compact">
         <template
@@ -89,10 +90,12 @@
 
 <script>
 import DetailModal from "@/components/DetailModal.vue";
+import TestCors from "@/components/TestCors.vue";
 export default {
   name: "App",
   components: {
     DetailModal,
+    TestCors,
   },
   data() {
     return {
@@ -214,15 +217,16 @@ export default {
       this.cardLoading = true;
       let result;
       await this.axios
-        .get(`${process.env.VUE_APP_API}/${url}`)
+        .get(`${process.env.VUE_APP_CORS}${process.env.VUE_APP_API}/${url}`)
         .then((res) => {
           console.log("get successful", res);
-          result = res.data.XML_Head.Infos.Info;
+          result = res.data;
         })
         .catch((err) => {
           console.error("get error", err);
+          result = require("../public/json/original_data");
         });
-      return result;
+      return result.XML_Head.Infos.Info;
     },
     changeListIndex(index) {
       this.nowCityIndex = index;
