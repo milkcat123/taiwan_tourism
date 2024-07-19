@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="dialog" width="auto">
-    <v-card max-width="600">
+    <v-card max-width="1000" width="80vw">
       <v-card-item>
         <div class="mb-4">
           <div class="text-overline">
@@ -10,10 +10,11 @@
           <div :class="contentTitleClass">
             {{ getItemData.duration }}
           </div>
-          <p class="multi-ellipsis line-5">
+          <!-- <p class="multi-ellipsis line-5"> -->
+          <p>
             {{ getItemData.content }}
           </p>
-          <v-btn class="ms-auto" text="查看更多"></v-btn>
+          <!-- <v-btn class="ms-auto" text="查看更多"></v-btn> -->
         </div>
         <div class="mb-3">
           <div :class="contentTitleClass">活動地址 |</div>
@@ -29,7 +30,23 @@
         </div>
         <div class="mb-3">
           <div :class="contentTitleClass">活動網址 |</div>
-          {{ getItemData.site }}
+          <a :href="getItemData.site" target="_blank">{{ getItemData.site }}</a>
+        </div>
+        <div class="mb-3">
+          <div :class="contentTitleClass">活動集錦 |</div>
+          <div class="d-flex flex-wrap">
+            <v-card
+              v-for="(item, index) in getItemData.pictures"
+              :key="index"
+              width="400px"
+              class="ma-3"
+            >
+              <!-- <img :src="item.url" :alt="item.content" /> -->
+              <v-img height="250px" :src="item.url" cover></v-img>
+              <!-- <p>{{ item.content }}</p> -->
+              <v-card-title class="px-3 py-2">{{ item.content }}</v-card-title>
+            </v-card>
+          </div>
         </div>
       </v-card-item>
       <template v-slot:actions>

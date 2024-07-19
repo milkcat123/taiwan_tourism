@@ -186,6 +186,8 @@ export default {
           town: item.Town,
           name: item.Name,
           content: item.Description,
+          start: item.Start,
+          end: item.End,
           duration: `${item.Start.slice(0, 10)} ~ ${item.End.slice(0, 10)}`,
           id: item.Id,
           address: item.Add,
@@ -217,7 +219,11 @@ export default {
       this.cardLoading = true;
       let result;
       await this.axios
-        .get(`${process.env.VUE_APP_CORS}${process.env.VUE_APP_API}/${url}`)
+        .get(`${process.env.VUE_APP_CORS}${process.env.VUE_APP_API}/${url}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
         .then((res) => {
           console.log("get successful", res);
           result = res.data;
