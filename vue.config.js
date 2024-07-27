@@ -21,16 +21,16 @@ module.exports = defineConfig({
   css: {
     sourceMap: true,
   },
-  devServer: {
-    proxy: {
-      api: {
-        target: "https://media.taiwan.net.tw",
-        changeOrigin: true,
-        pathRewrite: {
-          api: "",
-        },
-        //   ws: true
-      },
-    },
-  },
+//   devServer: {
+//     proxy: {
+//       api: {
+//         target: "https://media.taiwan.net.tw",
+//         changeOrigin: true,
+//         pathRewrite: {
+//           api: "",
+//         },
+//         //   ws: true
+//       },
+//     },
+//   },
 });
