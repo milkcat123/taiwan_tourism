@@ -28,24 +28,30 @@
           <div :class="contentTitleClass">連絡電話 |</div>
           {{ getItemData.tel }}
         </div>
-        <div class="mb-3">
-          <div :class="contentTitleClass">活動網址 |</div>
-          <a :href="getItemData.site" target="_blank">{{ getItemData.site }}</a>
-        </div>
-        <div class="mb-3">
+        <template v-if="getItemData.site !== null">
+          <div class="mb-3">
+            <div :class="contentTitleClass">活動網址 |</div>
+            <a :href="getItemData.site" target="_blank">{{
+              getItemData.site
+            }}</a>
+          </div>
+        </template>
+        <div class="mb-3" v-if="ifImgNull">
           <div :class="contentTitleClass">活動集錦 |</div>
           <div class="d-flex flex-wrap">
-            <v-card
+            <template
               v-for="(item, index) in getItemData.pictures"
               :key="index"
-              width="400px"
-              class="ma-3"
             >
-              <!-- <img :src="item.url" :alt="item.content" /> -->
-              <v-img height="250px" :src="item.url" cover></v-img>
-              <!-- <p>{{ item.content }}</p> -->
-              <v-card-title class="px-3 py-2">{{ item.content }}</v-card-title>
-            </v-card>
+              <v-card width="400px" class="ma-3" v-if="item.url !== null">
+                <!-- <img :src="item.url" :alt="item.content" /> -->
+                <v-img height="250px" :src="item.url" cover></v-img>
+                <!-- <p>{{ item.content }}</p> -->
+                <v-card-title class="px-3 py-2">{{
+                  item.content
+                }}</v-card-title>
+              </v-card>
+            </template>
           </div>
         </div>
       </v-card-item>
@@ -76,6 +82,13 @@ export default {
     },
     contentTitleClass: function () {
       return `text-caption mb-1 text-blue-darken-2`;
+    },
+    ifImgNull: function () {
+      let bool = this.getItemData.pictures.some((item) => {
+        return item.url !== null;
+      });
+      console.log("ifImgNull", bool);
+      return bool;
     },
   },
   methods: {

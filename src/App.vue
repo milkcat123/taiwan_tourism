@@ -9,7 +9,7 @@
         <v-btn block variant="tonal" @click="initData(nowDatas)">
           沒資料請按這
         </v-btn>
-        <TestCors />
+        <!-- <TestCors /> -->
       </div>
       <v-list density="compact">
         <template
@@ -163,7 +163,7 @@ export default {
       let _set = new Set();
       let _arr = [];
       _datas.forEach((item) => {
-        let _region = item.Region === null ? "未分類" : item.Region;
+        let _region = this.returnIfNull(item.Region, "未分類");
         _set.add(_region);
       });
       Array.from(_set).forEach((item, index) => {
@@ -182,23 +182,32 @@ export default {
     getDataContent(_data, _datas) {
       _data.datas = _datas.map((item) => {
         let data = {
-          region: this.returnIfNull(item.Region) ? "未分類" : item.Region,
-          town: item.Town,
-          name: item.Name,
-          content: item.Description,
-          start: item.Start,
-          end: item.End,
+          region: this.returnIfNull(item.Region, "未分類"),
+          town: this.returnIfNull(item.Town,"未提供"),
+          name: this.returnIfNull(item.Name,"未提供"),
+          content: this.returnIfNull(item.Description,"未提供"),
+          start: this.returnIfNull(item.Start,"未提供"),
+          end: this.returnIfNull(item.End,"未提供"),
           duration: `${item.Start.slice(0, 10)} ~ ${item.End.slice(0, 10)}`,
           id: item.Id,
-          address: item.Add,
-          tel: item.Tel,
-          organization: item.Org,
+          address: this.returnIfNull(item.Add,"未提供"),
+          tel: this.returnIfNull(item.Tel,"未提供"),
+          organization: this.returnIfNull(item.Org,"未提供"),
           cycle: item.Cycle,
-          site: item.Website,
+          site: this.returnIfNull(item.Website),
           pictures: [
-            { url: item.Picture1, content: item.Picdescribe1 },
-            { url: item.Picture2, content: item.Picdescribe2 },
-            { url: item.Picture3, content: item.Picdescribe3 },
+            {
+              url: this.returnIfNull(item.Picture1),
+              content: this.returnIfNull(item.Picdescribe1),
+            },
+            {
+              url: this.returnIfNull(item.Picture2),
+              content: this.returnIfNull(item.Picdescribe2),
+            },
+            {
+              url: this.returnIfNull(item.Picture3),
+              content: this.returnIfNull(item.Picdescribe3),
+            },
           ],
           position: {
             x: item.Px,
@@ -208,18 +217,18 @@ export default {
         return data;
       });
     },
-    returnIfNull(prop) {
+    returnIfNull(prop, newVal = null) {
       if (prop === "" || prop === null) {
-        return true;
+        return newVal;
       } else {
-        return false;
+        return prop;
       }
     },
     async getData(url) {
       this.cardLoading = true;
       let result;
       await this.axios
-        .get(`${process.env.VUE_APP_CORS}${process.env.VUE_APP_API}/${url}`, {
+        .get(`${process.env.VUE_APP_API}/${url}`, {
           headers: {
             "Content-Type": "application/json",
           },
