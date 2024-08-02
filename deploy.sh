@@ -37,3 +37,5 @@ git commit -m "deploy `date +'%Y-%m-%d %H:%M:%S'`";
 git push -f $originUrl master:gh-pages
 
 cd -
+
+# command in git bash: sh deploy.sh
