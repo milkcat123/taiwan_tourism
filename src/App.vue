@@ -1,16 +1,22 @@
 <template>
   <v-layout>
     <v-app-bar color="primary" density="compact">
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon
+          @click.stop="drawer = !drawer"
+          variant="text"
+          color="white"
+        ></v-app-bar-nav-icon>
+      </template>
       <v-app-bar-title>{{ title }}</v-app-bar-title>
     </v-app-bar>
 
-    <v-navigation-drawer>
-      <div class="pa-2">
+    <v-navigation-drawer v-model="drawer">
+      <!-- <div class="pa-2">
         <v-btn block variant="tonal" @click="initData(nowDatas)">
           沒資料請按這
         </v-btn>
-        <!-- <TestCors /> -->
-      </div>
+      </div> -->
       <v-list density="compact">
         <template
           v-for="(item, index) in listItems"
@@ -37,6 +43,19 @@
       min-height="100vh"
       style="width: 100%"
     >
+      <div
+        class="d-inline-block pt-2 pr-4"
+        v-for="(filterItem, index) in filter"
+        :key="index"
+      >
+        <v-checkbox
+          :label="filterItem.text"
+          v-model="filterItem.value"
+          hide-details
+          color="orange"
+        >
+        </v-checkbox>
+      </div>
       <div class="d-flex align-strech justify-start flex-wrap">
         <!-- loading -->
         <v-skeleton-loader
@@ -48,14 +67,22 @@
         ></v-skeleton-loader>
         <!-- cards -->
         <template v-if="!cardLoading">
+          <div class="pa-3" v-show="cityDatas.length === 0">該縣市無活動</div>
           <v-card
             class="ma-2"
             v-for="(item, i) in cityDatas"
+            v-show="showPast(item)"
             :key="i"
             style="width: 23.5%"
           >
             <v-card-item>
-              <div class="text-overline">{{ item.region }} {{ item.town }}</div>
+              <div class="text-overline d-flex justify-space-between">
+                {{ item.region }} {{ item.town }}
+                <v-btn variant="plain" size="small" icon="mdi-heart-outline">
+                  <v-icon icon="mdi-heart-outline"></v-icon>
+                </v-btn>
+              </div>
+
               <div
                 class="text-h6 mb-2 multi-ellipsis line-2"
                 style="min-height: 64px"
@@ -90,12 +117,11 @@
 
 <script>
 import DetailModal from "@/components/DetailModal.vue";
-import TestCors from "@/components/TestCors.vue";
+import citycode from "../public/json/citycode.json";
 export default {
   name: "App",
   components: {
     DetailModal,
-    TestCors,
   },
   data() {
     return {
@@ -124,6 +150,19 @@ export default {
       nowCityIndex: 0,
       cardLoading: true,
       itemData: {},
+      drawer: true,
+      cityCode: citycode,
+      filter: [
+        {
+          text: "顯示已過期活動",
+          value: false,
+        },
+        {
+          text: "僅顯示收藏活動",
+          value: false,
+        },
+      ],
+      favoriteItems: [],
     };
   },
   created() {
@@ -154,45 +193,57 @@ export default {
       if (_datas === undefined) {
         return;
       }
-      this.getCityList(_datas);
+      this.getCityList(); //_datas
       this.getDataContent(_data, _datas);
       this.cardLoading = false;
     },
-    getCityList(_datas) {
+    getCityList() {
       //列表
-      let _set = new Set();
-      let _arr = [];
-      _datas.forEach((item) => {
-        let _region = this.returnIfNull(item.Region, "未分類");
-        _set.add(_region);
+      //   let _set = new Set();
+      //   let _arr = [];
+      //   _datas.forEach((item) => {
+      //     let _region = this.returnIfNull(item.Region, "未分類");
+      //     _set.add(_region);
+      //   });
+      //   Array.from(_set).forEach((item, index) => {
+      //     _arr.push({
+      //       text: item,
+      //       value: index + 1,
+      //     });
+      //   });
+      let _list = this.cityCode.map((it, idx) => {
+        return { text: it.city, value: idx + 1 };
       });
-      Array.from(_set).forEach((item, index) => {
-        _arr.push({
-          text: item,
-          value: index + 1,
-        });
-      });
+      console.log(_list);
       let _init = {
         text: "全台",
         value: 0,
       };
-      this.listItems[0].datas = [_init, ..._arr];
+      let _none = {
+        text: "未分類",
+        value: 99,
+      };
+      this.listItems[0].datas = [_init, ..._list, _none];
       console.log("getCityList", this.listItems[0].datas);
+    },
+    getCityCode(data) {
+      let _a = this.cityCode.filter((it) => it.city === data);
+      return _a[0];
     },
     getDataContent(_data, _datas) {
       _data.datas = _datas.map((item) => {
         let data = {
           region: this.returnIfNull(item.Region, "未分類"),
-          town: this.returnIfNull(item.Town,"未提供"),
-          name: this.returnIfNull(item.Name,"未提供"),
-          content: this.returnIfNull(item.Description,"未提供"),
-          start: this.returnIfNull(item.Start,"未提供"),
-          end: this.returnIfNull(item.End,"未提供"),
+          town: this.returnIfNull(item.Town, "未提供"),
+          name: this.returnIfNull(item.Name, "未提供"),
+          content: this.returnIfNull(item.Description, "未提供"),
+          start: this.returnIfNull(item.Start, "未提供"),
+          end: this.returnIfNull(item.End, "未提供"),
           duration: `${item.Start.slice(0, 10)} ~ ${item.End.slice(0, 10)}`,
           id: item.Id,
-          address: this.returnIfNull(item.Add,"未提供"),
-          tel: this.returnIfNull(item.Tel,"未提供"),
-          organization: this.returnIfNull(item.Org,"未提供"),
+          address: this.returnIfNull(item.Add, "未提供"),
+          tel: this.returnIfNull(item.Tel, "未提供"),
+          organization: this.returnIfNull(item.Org, "未提供"),
           cycle: item.Cycle,
           site: this.returnIfNull(item.Website),
           pictures: [
@@ -213,6 +264,7 @@ export default {
             x: item.Px,
             y: item.Py,
           },
+          pastTag: this.filterToday(item.End),
         };
         return data;
       });
@@ -252,6 +304,22 @@ export default {
       this.itemData = itemData;
       let _DetailModal = this.$refs.DetailModal;
       _DetailModal.switchModal();
+    },
+    filterToday(_date) {
+      let today = new Date().getTime();
+      let theday = new Date(_date).getTime();
+      if (today > theday && theday) {
+        return true;
+      }
+      return false;
+    },
+    showPast(item) {
+      let tag = item.pastTag;
+      let check = this.filter[0].value;
+      if (tag && !check) {
+        return false;
+      }
+      return true;
     },
   },
 };
