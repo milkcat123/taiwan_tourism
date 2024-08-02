@@ -56,6 +56,7 @@
         >
         </v-checkbox>
       </div>
+
       <div class="d-flex align-strech justify-start flex-wrap">
         <!-- loading -->
         <v-skeleton-loader
@@ -68,6 +69,7 @@
         <!-- cards -->
         <template v-if="!cardLoading">
           <div class="pa-3" v-show="cityDatas.length === 0">該縣市無活動</div>
+
           <v-card
             class="ma-2"
             v-for="(item, i) in cityDatas"
@@ -78,8 +80,14 @@
             <v-card-item>
               <div class="text-overline d-flex justify-space-between">
                 {{ item.region }} {{ item.town }}
-                <v-btn variant="plain" size="small" icon="mdi-heart-outline">
-                  <v-icon icon="mdi-heart-outline"></v-icon>
+
+                <v-btn
+                  variant="text"
+                  size="small"
+                  icon="mdi-heart-outline"
+                  @click="toggleFavorite(item.id)"
+                >
+                  <v-icon :icon="hasFavorite(item.id)" color="red"></v-icon>
                 </v-btn>
               </div>
 
@@ -313,13 +321,27 @@ export default {
       }
       return false;
     },
-    showPast(item) {
-      let tag = item.pastTag;
+    showPast(_item) {
+      let tag = _item.pastTag;
       let check = this.filter[0].value;
       if (tag && !check) {
         return false;
       }
       return true;
+    },
+    hasFavorite(_id) {
+      let bool = this.favoriteItems.includes(_id);
+      return bool ? "mdi-heart" : "mdi-heart-outline";
+    },
+    toggleFavorite(_id) {
+      let _a = [...this.favoriteItems];
+      if (!_a.includes(_id)) {
+        this.favoriteItems.push(_id);
+        console.log("加入收藏", this.favoriteItems);
+      } else {
+        this.favoriteItems = _a.filter((it) => it !== _id);
+        console.log("取消收藏", this.favoriteItems);
+      }
     },
   },
 };
