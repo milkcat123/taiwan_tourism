@@ -1,42 +1,6 @@
 <template>
   <v-layout>
-    <v-app-bar color="primary" density="compact">
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon
-          @click.stop="drawer = !drawer"
-          variant="text"
-          color="white"
-        ></v-app-bar-nav-icon>
-      </template>
-      <v-app-bar-title>{{ title }}</v-app-bar-title>
-    </v-app-bar>
-
-    <v-navigation-drawer v-model="drawer">
-      <!-- <div class="pa-2">
-        <v-btn block variant="tonal" @click="initData(nowDatas)">
-          沒資料請按這
-        </v-btn>
-      </div> -->
-      <v-list density="compact">
-        <template
-          v-for="(item, index) in listItems"
-          :key="`list-list-${index}`"
-        >
-          <v-list-subheader>{{ item.subTitle }}</v-list-subheader>
-
-          <v-list-item
-            v-for="(item, index) in item.datas"
-            :key="`list-item-${index}`"
-            :active="item.value === nowCityIndex"
-            :value="item"
-            color="primary"
-            @click="changeListIndex(index)"
-          >
-            <v-list-item-title v-text="item.text"></v-list-item-title>
-          </v-list-item>
-        </template>
-      </v-list>
-    </v-navigation-drawer>
+    <NavBar @listdata="getListindex" :nowCityText="nowCityText" />
 
     <v-main
       class="mx-auto bg-grey-lighten-3"
@@ -125,16 +89,18 @@
 </template>
 
 <script>
+import NavBar from "@/layout/NavBar.vue";
 import DetailModal from "@/components/DetailModal.vue";
-import citycode from "../public/json/citycode.json";
 export default {
   name: "App",
   components: {
+    NavBar,
     DetailModal,
   },
   data() {
     return {
-      title: "全台觀光資訊 Taiwan Tourism Info",
+      cardLoading: true,
+      nowTypeIndex: 0,
       dataList: [
         {
           url: "XMLReleaseALL_public/activity_C_f.json",
@@ -145,25 +111,9 @@ export default {
           datas: [],
         },
       ],
-      listItems: [
-        {
-          subTitle: "活動",
-          datas: [],
-        },
-        {
-          subTitle: "景點",
-          datas: [],
-        },
-      ],
-      nowTypeIndex: 0,
-      nowCityIndex: 0,
-      cardLoading: true,
-      itemData: {},
-      drawer: true,
-      cityCode: citycode,
       filter: [
         {
-          text: "顯示已過期活動",
+          text: "隱藏已過期活動",
           value: false,
         },
         {
@@ -172,25 +122,25 @@ export default {
         },
       ],
       favoriteItems: [],
+      nowCityText: "全台",
+      itemData: {},
     };
   },
   created() {
     this.initData(this.nowDatas);
   },
-  mounted() {},
   computed: {
     nowDatas: function () {
       return this.dataList[this.nowTypeIndex];
     },
     cityDatas: function () {
-      if (this.nowCityIndex === 0) {
+      if (this.nowCityText === "全台") {
         return this.dataList[this.nowTypeIndex].datas;
       } else {
-        let _city =
-          this.listItems[this.nowTypeIndex].datas[this.nowCityIndex].text;
         let result = this.dataList[this.nowTypeIndex].datas.filter((item) => {
-          return item.region === _city;
+          return item.region === this.nowCityText;
         });
+        console.log("切換:", this.nowCityText, result);
         return result;
       }
     },
@@ -202,42 +152,8 @@ export default {
       if (_datas === undefined) {
         return;
       }
-      this.getCityList(); //_datas
       this.getDataContent(_data, _datas);
       this.cardLoading = false;
-    },
-    getCityList() {
-      //列表
-      //   let _set = new Set();
-      //   let _arr = [];
-      //   _datas.forEach((item) => {
-      //     let _region = this.returnIfNull(item.Region, "未分類");
-      //     _set.add(_region);
-      //   });
-      //   Array.from(_set).forEach((item, index) => {
-      //     _arr.push({
-      //       text: item,
-      //       value: index + 1,
-      //     });
-      //   });
-      let _list = this.cityCode.map((it, idx) => {
-        return { text: it.city, value: idx + 1 };
-      });
-      console.log(_list);
-      let _init = {
-        text: "全台",
-        value: 0,
-      };
-      let _none = {
-        text: "未分類",
-        value: 99,
-      };
-      this.listItems[0].datas = [_init, ..._list, _none];
-      console.log("getCityList", this.listItems[0].datas);
-    },
-    getCityCode(data) {
-      let _a = this.cityCode.filter((it) => it.city === data);
-      return _a[0];
     },
     getDataContent(_data, _datas) {
       _data.datas = _datas.map((item) => {
@@ -304,10 +220,6 @@ export default {
         });
       return result.XML_Head.Infos.Info;
     },
-    changeListIndex(index) {
-      this.nowCityIndex = index;
-      console.log("changeListIndex", this.nowCityIndex, this.cityDatas);
-    },
     viewDetail(itemData) {
       console.log("viewDetail", itemData);
       this.itemData = itemData;
@@ -333,7 +245,7 @@ export default {
         }
         return false;
       }
-      if (tag && !check) {
+      if (tag && check) {
         return false;
       }
       return true;
@@ -351,6 +263,9 @@ export default {
         this.favoriteItems = _a.filter((it) => it !== _id);
         console.log("取消收藏", this.favoriteItems);
       }
+    },
+    getListindex(_data) {
+      this.nowCityText = _data;
     },
   },
 };

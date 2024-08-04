@@ -9,6 +9,8 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
+import vue3GoogleLogin from "vue3-google-login";
+
 import App from "./App.vue";
 import "./registerServiceWorker";
 
@@ -20,4 +22,10 @@ const vuetify = createVuetify({
   },
 });
 
-createApp(App).use(VueAxios, axios).use(vuetify).mount("#app");
+createApp(App)
+  .use(VueAxios, axios)
+  .use(vuetify)
+  .use(vue3GoogleLogin, {
+    clientId: process.env.VUE_APP_AUTH_ID,
+  })
+  .mount("#app");
