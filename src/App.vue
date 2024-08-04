@@ -73,7 +73,7 @@
           <v-card
             class="ma-2"
             v-for="(item, i) in cityDatas"
-            v-show="showPast(item)"
+            v-show="showCard(item)"
             :key="i"
             style="width: 23.5%"
           >
@@ -86,6 +86,7 @@
                   size="small"
                   icon="mdi-heart-outline"
                   @click="toggleFavorite(item.id)"
+                  :disabled="item.pastTag"
                 >
                   <v-icon :icon="hasFavorite(item.id)" color="red"></v-icon>
                 </v-btn>
@@ -321,9 +322,17 @@ export default {
       }
       return false;
     },
-    showPast(_item) {
+    showCard(_item) {
       let tag = _item.pastTag;
       let check = this.filter[0].value;
+      let fav = this.filter[1].value;
+      let incl = this.favoriteItems.includes(_item.id);
+      if (fav) {
+        if (incl) {
+          return true;
+        }
+        return false;
+      }
       if (tag && !check) {
         return false;
       }
