@@ -7,21 +7,11 @@
       min-height="100vh"
       style="width: 100%"
     >
-      <div
-        class="d-inline-block pt-2 pr-4"
-        v-for="(filterItem, index) in filter"
-        :key="index"
-      >
-        <v-checkbox
-          :label="filterItem.text"
-          v-model="filterItem.value"
-          hide-details
-          color="orange"
-        >
-        </v-checkbox>
+      <div class="w-100 d-flex align-center justify-space-between px-3">
+        <FilterCheckbox :filters="filter" @checkfilter="checkfilter" />
+        <div class="pr-2 text-subtitle-2">共{{ cityDatas.length }}筆資料</div>
       </div>
-
-      <div class="d-flex align-strech justify-start flex-wrap">
+      <div class="d-flex align-center justify-start flex-wrap">
         <!-- loading -->
         <v-skeleton-loader
           type="article,subtitle,button"
@@ -68,7 +58,7 @@
               >
                 {{ item.content }}
               </div>
-              <div class="text-overline">活動時間</div>
+              <div class="text-overline text-blue-darken-2">活動時間</div>
               <div class="text-caption mb-3">
                 {{ item.duration }}
               </div>
@@ -91,11 +81,13 @@
 <script>
 import NavBar from "@/layout/NavBar.vue";
 import DetailModal from "@/components/DetailModal.vue";
+import FilterCheckbox from "@/components/FilterCheckbox.vue";
 export default {
   name: "App",
   components: {
     NavBar,
     DetailModal,
+    FilterCheckbox,
   },
   data() {
     return {
@@ -115,10 +107,12 @@ export default {
         {
           text: "隱藏已過期活動",
           value: false,
+          id: 0,
         },
         {
           text: "僅顯示收藏活動",
           value: false,
+          id: 1,
         },
       ],
       favoriteItems: [],
@@ -233,6 +227,12 @@ export default {
         return true;
       }
       return false;
+    },
+    checkfilter(_data) {
+      console.log("filterItem", _data);
+      let _idx = this.filter.indexOf(_data);
+      console.log("this.filter", this.filter[_idx].value);
+      this.filter[_idx].value = !this.filter[_idx].value;
     },
     showCard(_item) {
       let tag = _item.pastTag;

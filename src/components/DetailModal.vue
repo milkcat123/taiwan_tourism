@@ -1,20 +1,22 @@
 <template>
-  <v-dialog v-model="dialog" width="auto">
+  <v-dialog v-model="dialog" width="auto" scrollable>
     <v-card max-width="1000" width="80vw">
       <v-card-item>
-        <div class="mb-4">
-          <div class="text-overline">
-            {{ getItemData.region }} {{ getItemData.town }}
-          </div>
-          <div class="text-h6 mb-1">{{ getItemData.name }}</div>
-          <div :class="contentTitleClass">
-            {{ getItemData.duration }}
-          </div>
-          <!-- <p class="multi-ellipsis line-5"> -->
-          <p>
-            {{ getItemData.content }}
-          </p>
-          <!-- <v-btn class="ms-auto" text="查看更多"></v-btn> -->
+        <!-- <div class="mb-4"> -->
+        <div class="text-overline">
+          {{ getItemData.region }} {{ getItemData.town }}
+        </div>
+        <div class="text-h6 mb-1">{{ getItemData.name }}</div>
+        <div :class="contentTitleClass">
+          {{ getItemData.duration }}
+        </div>
+        <!-- </div> -->
+      </v-card-item>
+      <v-divider></v-divider>
+      <v-card-text style="height: 400px">
+        <div class="mb-3">
+          <div :class="contentTitleClass">活動內容 |</div>
+          {{ getItemData.content }}
         </div>
         <div class="mb-3">
           <div :class="contentTitleClass">活動地址 |</div>
@@ -54,9 +56,15 @@
             </template>
           </div>
         </div>
-      </v-card-item>
+      </v-card-text>
+      <v-divider></v-divider>
       <template v-slot:actions>
-        <v-btn class="ms-auto" text="關閉" @click="dialog = false"></v-btn>
+        <v-btn
+          class="ms-auto"
+          text="關閉"
+          @click="dialog = false"
+          variant="tonal"
+        ></v-btn>
       </template>
     </v-card>
   </v-dialog>
