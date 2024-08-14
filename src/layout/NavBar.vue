@@ -67,7 +67,7 @@ export default {
       let _list = this.cityCode.map((it, idx) => {
         return { text: it.city, value: idx + 1 };
       });
-      console.log(_list);
+
       let _init = {
         text: "全台",
         value: 0,
@@ -77,7 +77,6 @@ export default {
         value: 99,
       };
       this.listItems[0].datas = [_init, ..._list, _none];
-      console.log("getCityList", this.listItems[0].datas);
     },
   },
   mounted() {

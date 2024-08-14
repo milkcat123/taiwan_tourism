@@ -95,7 +95,6 @@ export default {
       let bool = this.getItemData.pictures.some((item) => {
         return item.url !== null;
       });
-      console.log("ifImgNull", bool);
       return bool;
     },
   },

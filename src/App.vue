@@ -9,7 +9,7 @@
     >
       <div class="w-100 d-flex align-center justify-space-between px-3">
         <FilterCheckbox :filters="filter" @checkfilter="checkfilter" />
-        <div class="pr-2 text-subtitle-2">共{{ cityDatas.length }}筆資料</div>
+        <div class="pr-2 text-subtitle-2">共{{ filterData.length }}筆資料</div>
       </div>
       <div class="d-flex align-center justify-start flex-wrap">
         <!-- loading -->
@@ -22,12 +22,11 @@
         ></v-skeleton-loader>
         <!-- cards -->
         <template v-if="!cardLoading">
-          <div class="pa-3" v-show="cityDatas.length === 0">該縣市無活動</div>
+          <div class="pa-3" v-show="filterData.length === 0">該縣市無活動</div>
 
           <v-card
             class="ma-2"
-            v-for="(item, i) in cityDatas"
-            v-show="showCard(item)"
+            v-for="(item, i) in filterData"
             :key="i"
             style="width: 23.5%"
           >
@@ -128,25 +127,37 @@ export default {
       return this.dataList[this.nowTypeIndex];
     },
     cityDatas: function () {
+      let _datas = this.dataList[this.nowTypeIndex].datas;
       if (this.nowCityText === "全台") {
-        return this.dataList[this.nowTypeIndex].datas;
+        return _datas;
       } else {
-        let result = this.dataList[this.nowTypeIndex].datas.filter((item) => {
+        console.log("切換:", this.nowCityText);
+        return _datas.filter((item) => {
           return item.region === this.nowCityText;
         });
-        console.log("切換:", this.nowCityText, result);
-        return result;
       }
+    },
+    filterData: function () {
+      let check = this.filter[0].value;
+      let fav = this.filter[1].value;
+      let _data = this.cityDatas;
+      if (fav) {
+        return _data.filter((it) => this.favoriteItems.includes(it.id));
+      }
+      if (check) {
+        return _data.filter((it) => !it.pastTag);
+      }
+      return _data;
     },
   },
   methods: {
     async initData(_data) {
       let _datas = await this.getData(_data.url);
-      console.log("_datas", _datas);
       if (_datas === undefined) {
         return;
       }
       this.getDataContent(_data, _datas);
+      this.getStorageList();
       this.cardLoading = false;
     },
     getDataContent(_data, _datas) {
@@ -188,6 +199,9 @@ export default {
         return data;
       });
     },
+    getStorageList() {
+      this.favoriteItems = JSON.parse(localStorage.getItem("taiwantourlist"));
+    },
     returnIfNull(prop, newVal = null) {
       if (prop === "" || prop === null) {
         return newVal;
@@ -205,7 +219,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log("get successful", res);
           result = res.data;
         })
         .catch((err) => {
@@ -215,7 +228,6 @@ export default {
       return result.XML_Head.Infos.Info;
     },
     viewDetail(itemData) {
-      console.log("viewDetail", itemData);
       this.itemData = itemData;
       let _DetailModal = this.$refs.DetailModal;
       _DetailModal.switchModal();
@@ -229,27 +241,25 @@ export default {
       return false;
     },
     checkfilter(_data) {
-      console.log("filterItem", _data);
       let _idx = this.filter.indexOf(_data);
-      console.log("this.filter", this.filter[_idx].value);
       this.filter[_idx].value = !this.filter[_idx].value;
     },
-    showCard(_item) {
-      let tag = _item.pastTag;
-      let check = this.filter[0].value;
-      let fav = this.filter[1].value;
-      let incl = this.favoriteItems.includes(_item.id);
-      if (fav) {
-        if (incl) {
-          return true;
-        }
-        return false;
-      }
-      if (tag && check) {
-        return false;
-      }
-      return true;
-    },
+    // showCard(_item) {
+    //   let tag = _item.pastTag;
+    //   let check = this.filter[0].value;
+    //   let fav = this.filter[1].value;
+    //   let incl = this.favoriteItems.includes(_item.id);
+    //   if (fav) {
+    //     if (incl) {
+    //       return true;
+    //     }
+    //     return false;
+    //   }
+    //   if (tag && check) {
+    //     return false;
+    //   }
+    //   return true;
+    // },
     hasFavorite(_id) {
       let bool = this.favoriteItems.includes(_id);
       return bool ? "mdi-heart" : "mdi-heart-outline";
@@ -258,11 +268,14 @@ export default {
       let _a = [...this.favoriteItems];
       if (!_a.includes(_id)) {
         this.favoriteItems.push(_id);
-        console.log("加入收藏", this.favoriteItems);
       } else {
         this.favoriteItems = _a.filter((it) => it !== _id);
-        console.log("取消收藏", this.favoriteItems);
       }
+      localStorage.setItem(
+        "taiwantourlist",
+        JSON.stringify(this.favoriteItems)
+      );
+      console.log("收藏列表", localStorage.getItem("taiwantourlist"));
     },
     getListindex(_data) {
       this.nowCityText = _data;
