@@ -8,9 +8,9 @@
       ></v-app-bar-nav-icon>
     </template>
     <v-app-bar-title>{{ title }}</v-app-bar-title>
-    <template v-slot:append>
+    <!-- <template v-slot:append>
       <GoogleAuth />
-    </template>
+    </template> -->
   </v-app-bar>
 
   <v-navigation-drawer v-model="drawer">
@@ -36,10 +36,10 @@
 </template>
 
 <script>
-import GoogleAuth from "@/components/GoogleAuth.vue";
+// import GoogleAuth from "@/components/GoogleAuth.vue";
 import citycode from "../../public/json/citycode.json";
 export default {
-  components: { GoogleAuth },
+  //   components: { GoogleAuth },
   props: ["nowCityText"],
   emits: ["listdata"],
   data() {
