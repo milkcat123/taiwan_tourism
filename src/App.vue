@@ -9,7 +9,18 @@
     >
       <div class="w-100 d-flex align-center justify-space-between px-3">
         <FilterCheckbox :filters="filter" @checkfilter="checkfilter" />
-        <div class="pr-2 text-subtitle-2">共{{ filterData.length }}筆資料</div>
+        <div>
+          <v-btn variant="tonal" @click="deleteAllFav()">
+            <v-icon icon="mdi-delete" color="black"></v-icon>
+            清除所有收藏
+          </v-btn>
+          <div
+            class="pr-2 text-subtitle-2 d-inline-block text-right"
+            style="width: 120px"
+          >
+            共{{ filterData.length }}筆資料
+          </div>
+        </div>
       </div>
 
       <div class="d-flex align-center justify-start flex-wrap">
@@ -119,6 +130,7 @@ export default {
       ],
       favoriteItems: [],
       itemData: {},
+      storageName: "taiwantourlist",
     };
   },
   mounted() {
@@ -206,8 +218,8 @@ export default {
       });
     },
     getStorageList() {
-      if (localStorage.getItem("taiwantourlist")) {
-        this.favoriteItems = JSON.parse(localStorage.getItem("taiwantourlist"));
+      if (localStorage.getItem(this.storageName)) {
+        this.favoriteItems = JSON.parse(localStorage.getItem(this.storageName));
       }
     },
     returnIfNull(prop, newVal = null) {
@@ -267,13 +279,19 @@ export default {
         this.favoriteItems = _a.filter((it) => it !== _id);
       }
       localStorage.setItem(
-        "taiwantourlist",
+        this.storageName,
         JSON.stringify(this.favoriteItems)
       );
-      console.log("收藏列表", localStorage.getItem("taiwantourlist"));
+      console.log("收藏列表", localStorage.getItem(this.storageName));
     },
     getListindex(_data) {
       this.nowCityText = _data;
+    },
+    deleteAllFav() {
+      this.favoriteItems = [];
+      if (localStorage.getItem(this.storageName)) {
+        localStorage.removeItem(this.storageName);
+      }
     },
   },
 };
