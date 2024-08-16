@@ -11,17 +11,18 @@
         <FilterCheckbox :filters="filter" @checkfilter="checkfilter" />
         <div class="pr-2 text-subtitle-2">共{{ filterData.length }}筆資料</div>
       </div>
+
       <div class="d-flex align-center justify-start flex-wrap">
         <!-- loading -->
         <v-skeleton-loader
+          v-if="cardLoading"
           type="article,subtitle,button"
           class="ma-2"
           width="300"
           height="330"
-          v-if="cardLoading"
         ></v-skeleton-loader>
         <!-- cards -->
-        <template v-if="!cardLoading">
+        <template v-else>
           <div class="pa-3" v-show="filterData.length === 0">該縣市無活動</div>
 
           <v-card
@@ -90,8 +91,10 @@ export default {
   },
   data() {
     return {
+      loading: false,
       cardLoading: true,
       nowTypeIndex: 0,
+      nowCityText: "全台",
       dataList: [
         {
           url: "XMLReleaseALL_public/activity_C_f.json",
@@ -115,7 +118,6 @@ export default {
         },
       ],
       favoriteItems: [],
-      nowCityText: "全台",
       itemData: {},
     };
   },
@@ -138,16 +140,20 @@ export default {
       }
     },
     filterData: function () {
-      let check = this.filter[0].value;
-      let fav = this.filter[1].value;
       let _data = this.cityDatas;
-      if (fav) {
-        return _data.filter((it) => this.favoriteItems.includes(it.id));
+      let result;
+
+      if (this.filter[1].value) {
+        //fav
+        result = _data.filter((it) => this.favoriteItems.includes(it.id));
+      } else if (this.filter[0].value) {
+        //past
+        result = _data.filter((it) => !it.pastTag);
+      } else {
+        result = _data;
       }
-      if (check) {
-        return _data.filter((it) => !it.pastTag);
-      }
-      return _data;
+
+      return result;
     },
   },
   methods: {
@@ -156,8 +162,8 @@ export default {
       if (_datas === undefined) {
         return;
       }
-      this.getDataContent(_data, _datas);
       this.getStorageList();
+      this.getDataContent(_data, _datas);
       this.cardLoading = false;
     },
     getDataContent(_data, _datas) {
@@ -240,26 +246,13 @@ export default {
       }
       return false;
     },
+    toggleLoading(bool) {
+      this.loading = bool;
+    },
     checkfilter(_data) {
       let _idx = this.filter.indexOf(_data);
       this.filter[_idx].value = !this.filter[_idx].value;
     },
-    // showCard(_item) {
-    //   let tag = _item.pastTag;
-    //   let check = this.filter[0].value;
-    //   let fav = this.filter[1].value;
-    //   let incl = this.favoriteItems.includes(_item.id);
-    //   if (fav) {
-    //     if (incl) {
-    //       return true;
-    //     }
-    //     return false;
-    //   }
-    //   if (tag && check) {
-    //     return false;
-    //   }
-    //   return true;
-    // },
     hasFavorite(_id) {
       let bool = this.favoriteItems.includes(_id);
       return bool ? "mdi-heart" : "mdi-heart-outline";

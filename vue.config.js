@@ -3,6 +3,12 @@ module.exports = defineConfig({
   publicPath: process.env.NODE_ENV === "production" ? "/taiwan_tourism/" : "/",
   transpileDependencies: true,
   lintOnSave: false,
+  pages: {
+    index: {
+      entry: "./src/main.js",
+      title: "全台活動一覽",
+    },
+  },
   pwa: {
     // name: "My App",
     // themeColor: "#4DBA87",
