@@ -23,7 +23,7 @@
         ></v-skeleton-loader>
         <!-- cards -->
         <template v-else>
-          <div class="pa-3" v-show="filterData.length === 0">該縣市無活動</div>
+          <div class="pa-3" v-show="filterData.length === 0">無活動</div>
 
           <v-card
             class="ma-2"
@@ -121,7 +121,7 @@ export default {
       itemData: {},
     };
   },
-  created() {
+  mounted() {
     this.initData(this.nowDatas);
   },
   computed: {
@@ -206,7 +206,9 @@ export default {
       });
     },
     getStorageList() {
-      this.favoriteItems = JSON.parse(localStorage.getItem("taiwantourlist"));
+      if (localStorage.getItem("taiwantourlist")) {
+        this.favoriteItems = JSON.parse(localStorage.getItem("taiwantourlist"));
+      }
     },
     returnIfNull(prop, newVal = null) {
       if (prop === "" || prop === null) {
