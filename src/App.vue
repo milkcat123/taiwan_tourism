@@ -7,7 +7,9 @@
       min-height="100vh"
       style="width: 100%"
     >
-      <div class="w-100 d-flex align-center justify-space-between px-3">
+      <div
+        class="w-100 d-flex align-center justify-space-between px-3 filter-row"
+      >
         <FilterCheckbox :filters="filter" @checkfilter="checkfilter" />
         <div>
           <v-btn variant="tonal" @click="deleteAllFav()">
@@ -23,7 +25,7 @@
         </div>
       </div>
 
-      <div class="d-flex align-center justify-start flex-wrap">
+      <div class="d-flex align-center justify-start flex-wrap w-100">
         <!-- loading -->
         <v-skeleton-loader
           v-if="cardLoading"
@@ -37,10 +39,9 @@
           <div class="pa-3" v-show="filterData.length === 0">無活動</div>
 
           <v-card
-            class="ma-2"
+            class="ma-2 d-inline-block card-item"
             v-for="(item, i) in filterData"
             :key="i"
-            style="width: 23.5%"
           >
             <v-card-item>
               <div class="text-overline d-flex justify-space-between">

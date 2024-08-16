@@ -1,0 +1,41 @@
+//rwd
+@mixin pad {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin portrait {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 426px) {
+    @content;
+  }
+}
+
+@mixin minimum {
+  @media (max-width: 376px) {
+    @content;
+  }
+}
+
+.card-item {
+  width: 23.5%;
+  @include pad {
+    width: 31%;
+  }
+  @include mobile {
+    width: 95%;
+  }
+}
+.filter-row {
+  @include mobile {
+    padding-top: 20px;
+    flex-direction: column-reverse;
+    
+  }
+}
