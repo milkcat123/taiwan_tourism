@@ -1,0 +1,32 @@
+{
+    "Id": "C2_A15010000H_081055", //活動id
+    "Name": "2023六堆秋收祭系列活動",//活動名稱
+    "Description": "客家人利用「春祈、夏耘、秋收、冬藏」大自然時序變化，來調整一年作息的生活方式，是代代相傳的優美文化，而每年十月底十一月初正是豐收的時節，各地均會酬神以慶祝一年一度秋收祭的到來。為貼近民眾生活及帶動六堆客家地區觀光，今年秋收祭特以「親近自然」為主題發想，規劃一系列「謝天、迎秋神」、「千人開幕式」、「彩妝遊園活動」、「庄頭藝文」、「秋收主題體驗」、「食福宴暨聯歡晚會」等豐富活動，將客庄秋收的歡愉與故事，透過各項活動傳遞客家多元的文化面貌以表達我們對天地最深的敬意與情感。",
+    "Participation": "",
+    "Location": "屏東縣 內埔鄉",//地址: 區域
+    "Add": "信義路588號",//地址: 詳細
+    "Region": "屏東縣",//縣市
+    "Town": "內埔鄉",//鄉鎮區
+    "Tel": "08-7230100",//連絡電話
+    "Org": "客家委員會客家文化發展中心",//主辦單位
+    "Start": "2023-11-04T00:00:00+08:00",//開始日期
+    "End": "2023-11-26T00:00:00+08:00",//結束日期
+    "Cycle": "", //巡迴、期間
+    "Noncycle": "",
+    "Website": "https://www.facebook.com/liuduihakka/?locale=zh_TW",//活動網站
+    "Picture1": "https://www.taiwan.net.tw/att/event/b155619f-abe5-47c6-ae38-735046c86ee0.jpg",//相關圖片
+    "Picdescribe1": "秋收稻田豐收慶",
+    "Picture2": "https://www.taiwan.net.tw/att/event/497eba92-90b0-4a04-9a13-cbce40cfedee.jpg",
+    "Picdescribe2": "豐收割禾趣",
+    "Picture3": "https://www.taiwan.net.tw/att/event/dc577834-86d1-4828-9fa2-01847e18b4ac.jpg",
+    "Picdescribe3": "藝文表演活動",
+    "Px": 120.558815,
+    "Py": 22.658418,
+    "Class1": "01",
+    "Class2": "02",
+    "Map": "",
+    "Travellinginfo": "",
+    "Parkinginfo": "",
+    "Charge": "",
+    "Remarks": ""
+},
