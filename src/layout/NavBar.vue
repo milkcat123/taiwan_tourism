@@ -7,10 +7,8 @@
         color="white"
       ></v-app-bar-nav-icon>
     </template>
+
     <v-app-bar-title>{{ title }}</v-app-bar-title>
-    <!-- <template v-slot:append>
-      <GoogleAuth />
-    </template> -->
   </v-app-bar>
 
   <v-navigation-drawer v-model="drawer">
@@ -36,16 +34,14 @@
 </template>
 
 <script>
-// import GoogleAuth from "@/components/GoogleAuth.vue";
 import citycode from "../../public/json/citycode.json";
 export default {
-  //   components: { GoogleAuth },
   props: ["nowCityText"],
   emits: ["listdata"],
   data() {
     return {
       title: "全台觀光資訊 Taiwan Tourism Info",
-      drawer: true,
+      drawer: false,
       listItems: [
         {
           subTitle: "活動",
